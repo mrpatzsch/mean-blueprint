@@ -20,7 +20,7 @@ code>cd mean-blueprint</code>
 <p>When the generator has done its business, I have a working express application to which I will do some quick house-cleaning.</p>
 <h5>Express Layout Housecleaning</h5>
 <p>Out of the box, express sets everything up with the following directory structure:</p>
-<code>
+<pre>
 bin/
 |   www
 node_modules/
@@ -37,7 +37,7 @@ views/
 .gitignore
 app.js
 package.json
-</code>
+</pre>
 <p>There's a few things I want to change:</p>
 <ul>
   <li>
@@ -54,7 +54,7 @@ package.json
 <p>The first thing I want to do is add three base folders in which all the other application code will go: 'server', 'client', 'build'. The server folder will hold any code specifically associated with the node/express side of things, while the client folder will feature anything that will be needed client side. Basically, this will take the place of the 'public' folder the express generator created. For now this will remain empty as I will be using gulp to build the client side from the 'build' folder.</p>
 <p>I am also creating a 'controller' folder inside of the 'server' folder to populate with the controller logic I will create later.</p>
 <p>As of now, the structure of my app looks like this:</p>
-<code>
+<pre>
 server/
 |   app.js
 |   bin/
@@ -75,7 +75,7 @@ build/
 node_modules/
 .gitignore
 package.json
-</code>
+</pre>
 <p>Now that the re-ordering is done, I need to update some files to make sure the application still knows where to find everything. The package.json file needs to be updated so that the start script knows the new location of the bin/www file:</p>
 <code>"start": "node ./server/bin/www"</code>
 <p>The app.js file needs to be updated so that it no longer looks for a 'public' folder from which it will server the static files available to the browser. Instead, it should now be looking for a 'client' folder:</p>
