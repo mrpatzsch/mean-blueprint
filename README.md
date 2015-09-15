@@ -83,25 +83,24 @@ package.json
 <h6>A New Controller Folder</h6>
 <p>The other thing I want to change is to separate the controller logic from the routes that the Express generator created. So I am going to create a 'controllers' folder inside of the server folder that will hold this new information, and inside of this new folder I'll create an 'indexCtrl.js' file that will hold the logic for the index routes.</p>
 <p>This file is currently only going to hold the logic associated with the index route, as it is the only route I have:</p>
-<code>
+<pre>
 module.exports.index = function(req, res, next) {
   var title = {title: 'mean-blueprint'};
   res.render('index', title);
 };
-</code>
+</pre>
 <p>The code is structured as a module.export method, so that I will easily be able to call it in the index.js route file to associate it accordingly. To do so, I first assign the controller file to a variable inside of the routes/index.js file...</p>
 <code>
   var indexCtrl = require('../controllers/indexCtrl');
 </code>
 <p>...and then update the actual index route to make use of the variable.</p>
-<code>
+<pre>
   Before: 
   router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });
   });
-</code>
-<code>
+
   After:
   router.get('/', indexCtrl.index);
-</code>
+</pre>
 
