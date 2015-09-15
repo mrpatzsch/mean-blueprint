@@ -104,3 +104,13 @@ module.exports.index = function(req, res, next) {
   router.get('/', indexCtrl.index);
 </pre>
 
+<h5>Adding Bower</h5>
+<code>bower init</code>
+<p>Assuming bower is installed globally, this command will create the 'bower.json' file that stores information on the files associated with this project.</p>
+<p>Now let's add the bower files that I know I will likely make use of, no matter the specific MEAN application: bootstrap, font-awesome, angular, ui-router.</p>
+<code>
+  bower install bootstrap font-awesome angular ui-router --save
+</code>
+<p>Once this is done, the directory will have a new folder called 'bower_components' that stores all of the files and their dependencies that we've downloaded. In this case, the additional library that got downloaded that I did not add myself is jQuery, since it is required for bootstrap.</p>
+<p>That's about it for the bower part of this. I've also added the 'bower_components' folder to the '.gitignore' file so that they needlessly won't be stored on the repository.</p>
+
