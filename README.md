@@ -114,3 +114,39 @@ module.exports.index = function(req, res, next) {
 <p>Once this is done, the directory will have a new folder called 'bower_components' that stores all of the files and their dependencies that we've downloaded. In this case, the additional library that got downloaded that I did not add myself is jQuery, since it is required for bootstrap.</p>
 <p>That's about it for the bower part of this. I've also added the 'bower_components' folder to the '.gitignore' file so that they needlessly won't be stored on the repository.</p>
 
+<h5>Gulp 4.0</h5>
+<p>Gulp will power all sorts of fun tasks for me, such as preprocessing the SCSS I will write into CSS, minifying and concactinating my .js files, and otherwise just being bad-ass at everything.</p>
+<p>Since I am using the 4.0 version, which is still in alpha at this point, the install will be slightly different.</p>
+<pre>
+  npm install -g "gulpjs/gulp-cli#4.0"
+  npm install gulpjs/gulp.git#4.0 --save-dev
+</pre>
+<p>Both the CLI and gulp itself to be the 4.0 version. As a quick aside, I am using 4.0, rather than the current standard because 4.0 ushers in some really cool changes that make me not want go back to any previous version. The tasks now handle syntactically like normal JS functions, something that increases readability quite a bit. For instance, take a look how a simple uglify task handles in 4.0 and previous versions:</p>
+<pre>
+  Previous Versions: 
+
+  gulp.task('scripts', function() {
+    return gulp.src(paths.scripts)
+    .pipe(uglify())
+    .pipe(concat('all.min.js'))
+    .pipe(gulp.dest('build/js'));
+  });
+
+
+
+  4.0:
+  gulp.task('scripts', 
+    gulp.series(scripts)
+  ));
+
+  function scripts() {
+    return gulp.src(paths.scripts)
+    .pipe(uglify())
+    .pipe(concat('all.min.js'))
+    .pipe(gulp.dest('build/js'));
+  }
+</pre>
+<p>The change might look small, but makes things easier tasks much easier to edit, especially once the gulp helper methods .series and .parallel are taken into account. And again, it just is much more readable.</p>
+
+
+
