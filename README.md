@@ -147,6 +147,23 @@ module.exports.index = function(req, res, next) {
   }
 </pre>
 <p>The change might look small, but makes things easier tasks much easier to edit, especially once the gulp helper methods .series and .parallel are taken into account. And again, it just is much more readable.</p>
+<p>Next I need to install the various gulp libraries I plan on using. Since, as I said before, I am planning on writing .scsss files, I'll make use of 'gulp-ruby-sass'. I am also going to install the usual roster of 'gulp-uglify' and 'gulp-concat', as well as 'gulp-main-bower-files' to help easily get the bower_components files.</p>
+<code>
+  npm install gulp-main-bower-files gulp-concat gulp-ruby-sass gulp-uglify gulp-ruby-sass --save-dev
+</code>
+<h6>gulpfile.js</h6>
+<code>touch gulpfile.js</code>
+<p>The gulpfile is where all the tasks get defined for gulp to automate. The first thing I need to do is define the various functions I'll be using.</p>
+<pre>
+var gulp = require('gulp');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var bower = require('gulp-main-bower-files');
+var sass = require('gulp-ruby-sass');
+var del = require('del');
+</pre>
+<p>The one file I haven't talked about yet is 'del', an npm module I'll be using to make sure that when gulp rebuilds files, the folders it will be rebuilding are clean of any code.</p>
+<code>npm install --save-dev del</code>
 
 
 
