@@ -3,7 +3,10 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var bower = require('gulp-main-bower-files');
 var sass = require('gulp-ruby-sass');
+var minifyCSS = require('gulp-minify-css');
+var autoprefixer = require('gulp-autoprefixer');
 var del = require('del');
+
 
 var paths = {
   client: './client',
@@ -14,7 +17,7 @@ var paths = {
 
 gulp.task('build', gulp.series(
   clean,
-  gulp.parallel(scripts, bowerScripts)
+  gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons)
 ));
 gulp.task(clean);
 
@@ -57,4 +60,27 @@ function bowerScripts() {
     .pipe(concat('vendor.js'))
     .pipe(uglify())
     .pipe(gulp.dest(paths.client + '/javascripts'));
+}
+
+function styles(){
+  return sass(paths.build + '/stylesheets/**/*', {style: 'compressed'})
+    .on('error', sass.logError)
+    .pipe(concat('all.css'))
+    .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+          }))
+    .pipe(minifyCSS())
+    .pipe(gulp.dest(paths.client + '/styles'));
+}
+
+function bowerStyles(){
+  return gulp.src([paths.bower + '/bootstrap/dist/css/bootstrap.css', paths.bower + '/font-awesome/css/font-awesome.css'])
+  .pipe(concat('vendor.css'))
+  .pipe(minifyCSS())
+  .pipe(gulp.dest(paths.client + '/styles'));
+}
+
+function icons(){
+  return gulp.src(paths.bower + '/font-awesome/fonts/*')
+    .pipe(gulp.dest(paths.client + '/fonts'));
 }

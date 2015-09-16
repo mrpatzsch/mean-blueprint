@@ -234,7 +234,29 @@ function bowerScripts() {
 }
 </pre>
 <p>This function is slightly more prodigious as the bower files that do not have javascript files need to be weeded out. The css and fonts provided by Bootstrap and Font-Awesome, for instance, will be handled in another function all together. Therefore, using some of the options availalbe to 'main-bower-files', the font-awesome library is entirely ignored in this function while only Bootstrap's .js file is called in.</p>
+<p><strong>The CSS functions</strong></p>
+<p>Just like with the javascript files, there will be two gulp tasks for CSS. The first is going to take the CSS from the bower files, while the second will translate the .scss files I'll write into css.</p>
+<pre>
+function bowerCSS(){
+  return gulp.src(['./bower_components/bootstrap/dist/css/bootstrap.css', './bower_components/font-awesome/css/font-awesome.css'])
+  .pipe(concat('vendor.css'))
+  .pipe(gulp.dest('./public/styles'));
+}
+</pre>
 
+
+<pre>
+function styles(){
+  return sass(paths.build + '/stylesheets/**/*', {style: 'compressed'})
+    .on('error', sass.logError)
+    .pipe(concat('all.css'))
+    .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+          }))
+    .pipe(minifyCSS())
+    .pipe(gulp.dest('./public/styles'));
+}
+</pre>
 
 
 
