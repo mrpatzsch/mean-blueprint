@@ -8,8 +8,18 @@ var del = require('del');
 var paths = {
   client: './client',
   server: './server',
-  bower: './bower_components'
+  bower: './bower_components',
+  build: './build'
 };
+
+gulp.task('build', gulp.series(
+  clean,
+  gulp.parallel(scripts, bowerScripts)
+));
+gulp.task(clean);
+
+// The default task (called when you run `gulp` from cli)
+gulp.task('default', gulp.series('build'));
 
 function clean() {
   del.sync(paths.client);
@@ -18,7 +28,7 @@ function clean() {
 }
 
 function scripts() {
-  return gulp.src(paths.server + '/javascripts/**/*.js')
+  return gulp.src(paths.build + '/javascripts/**/*.js')
   .pipe(concat('all.js'))
   .pipe(uglify())
   .pipe(gulp.dest(paths.client + '/javascripts'));
@@ -45,5 +55,6 @@ function bowerScripts() {
       }
     }))
     .pipe(concat('vendor.js'))
-    .pipe(gulp.dest('./public/javascripts'));
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.client + '/javascripts'));
 }

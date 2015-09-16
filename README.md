@@ -229,9 +229,11 @@ function bowerScripts() {
     }
   }))
   .pipe(concat('vendor.js'))
+  .pipe(uglify())
   .pipe(gulp.dest('./public/javascripts'));
 }
 </pre>
+<p>This function is slightly more prodigious as the bower files that do not have javascript files need to be weeded out. The css and fonts provided by Bootstrap and Font-Awesome, for instance, will be handled in another function all together. Therefore, using some of the options availalbe to 'main-bower-files', the font-awesome library is entirely ignored in this function while only Bootstrap's .js file is called in.</p>
 
 
 
