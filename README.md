@@ -164,6 +164,21 @@ var del = require('del');
 </pre>
 <p>The one file I haven't talked about yet is 'del', an npm module I'll be using to make sure that when gulp rebuilds files, the folders it will be rebuilding are clean of any code.</p>
 <code>npm install --save-dev del</code>
+<p>Next, I am going to define a paths object to hold some information that will make writing some of tasks less of a hassle.</p>
+<pre>
+var paths = {
+  client: './client',
+  server: './server',
+  bower: './bower_components'
+};
+</pre>
+<p>For the most part, I am planning on using 'gulp-main-bower-files' to handle getting my bower dist files, but there's a couple of places where dealing with it becomes more writing code than less, at which point I just manually select the correct path. The big downside of this is that should the layout of a particular bower file change due to a future update, I'll have to manually fix everything to keep it going.</p>
+<h6>Defining Gulp Tasks</h6>
+<p>I will define the actual gulp tasks that will run later. First I need to create the functions of which the tasks will actually make use.</p>
+<p><strong>Clean</strong></p>
+<p>The clean function I will be using is slightly different than the one found in Gulp's own example file for <a href="https://github.com/gulpjs/gulp/tree/4.0">a 4.0 gulpfile</a>.</p>
+
+
 
 
 
