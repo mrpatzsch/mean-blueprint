@@ -177,6 +177,61 @@ var paths = {
 <p>I will define the actual gulp tasks that will run later. First I need to create the functions of which the tasks will actually make use.</p>
 <p><strong>Clean</strong></p>
 <p>The clean function I will be using is slightly different than the one found in Gulp's own example file for <a href="https://github.com/gulpjs/gulp/tree/4.0">a 4.0 gulpfile</a>.</p>
+<pre>
+  Gulp Example Version:
+  
+  function clean(cb) {
+    del(['build'], cb);
+  }
+
+
+  Version I am using:
+
+  function clean() {
+    del.sync(paths.client);
+    var emptyStream = gulp.src([]).pipe(gulp.dest('/'));
+    return emptyStream;
+  }
+</pre>
+<p>The example version should work, as a callback is passed into del to take place once it has finished its business cleaning the given directory ('build' in the example's case, './client' in mine). This callback tells the next stream that it's time to start. However, in my experience, the callback never gets called. So instead I've created a slightly longer version where, after del has finished its business, an empty stream is created and returned to let the next stream know it's time to go.</p>
+<p><strong>Scripts</strong></p>
+<p>I like to keep my vendor and personal scripts separated for development purposes. This first scripts function is going to load in my personal .js files:</p>
+<pre>
+  function scripts() {
+    return gulp.src(paths.server + '/javascripts/**/*.js')
+    .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.client + '/javascripts'));
+  }
+</pre>
+<p>This function takes everything inside the server's javascripts folder, concatenates it donw into a single file called 'all.js', then minifies it, before sending off to the client's javascripts folder.</p>
+<p><strong>BowerScripts</strong></p>
+<p>The exact same idea and methodology as for the function above, this one concatenates and uglifies all of the vendor .js files before making it available for the client folder:</p>
+<pre>
+function bowerScripts() {
+  return gulp.src('./bower.json')
+  .pipe(bower({
+    debugging: true,
+    overrides: {
+      'bootstrap': {
+        main: [
+          './dist/js/bootstrap.js'
+        ]
+      },
+      'font-awesome': {
+        ignore: true
+      },
+      'angular-ui-router': {
+        main: [
+          './release/angular-ui-router.js'
+        ]
+      }
+    }
+  }))
+  .pipe(concat('vendor.js'))
+  .pipe(gulp.dest('./public/javascripts'));
+}
+</pre>
 
 
 
