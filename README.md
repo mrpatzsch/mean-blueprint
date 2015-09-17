@@ -41,7 +41,25 @@ server/app.js: <br/>
 </pre>
 <p>Since I am not planning on exporting any functions from the 'db.js' file, I won't have to define it into a variable in 'app.js'. I do, however, need it to be required in 'app.js', otherwise the mongoose connection won't be spooled up when the application is started.</p>
 <p><strong>Creating the Mongoose Connection</strong></p>
-
+<p>Creating a Mongoose connection requires nothing more than providing the URI for the database and passing it to Mongoose's connect method. Everything else is optional. So for a local database, it really only comes down to this:</p>
+<pre>
+  server/models/db.js: <br/>
+  var app = 'blueprint'; <br/>
+  var URI = 'mongodb://localhost/' + app; <br/>
+  mongoose.connect(URI);
+</pre>
+<p>The only thing that's left is to make sure that we know the database is actually connecting, which can be done by monitoring the connection events in mongoose.</p>
+<pre>
+  mongoose.connection.on('connected', function(){<br/>
+    console.log('Mongoose connected to:', dbURI);<br/>
+  });<br/>
+  mongoose.connection.on('error', function(err){<br/>
+    console.log('Mongoose connection err:', err);<br/>
+  });<br/>
+  mongoose.connection.on('disconnected', function(){<br/>
+    console.log('Mongoose disconnected');<br/>
+  });
+</pre>
 
 
 
