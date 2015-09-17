@@ -19,7 +19,6 @@ gulp.task('build', gulp.series(
   clean,
   gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons)
 ));
-gulp.task(clean);
 
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', gulp.series('build'));

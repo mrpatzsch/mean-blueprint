@@ -147,7 +147,7 @@ module.exports.index = function(req, res, next) {
   }
 </pre>
 <p>The change might look small, but makes things easier tasks much easier to edit, especially once the gulp helper methods .series and .parallel are taken into account. And again, it just is much more readable.</p>
-<p>Next I need to install the various gulp libraries I plan on using. Since, as I said before, I am planning on writing .scsss files, I'll make use of 'gulp-ruby-sass'. I am also going to install the usual roster of 'gulp-uglify' and 'gulp-concat', as well as 'gulp-main-bower-files' to help easily get the bower_components files.</p>
+<p>Next I need to install the various gulp libraries I plan on using. Since, as I said before, I am planning on writing .scsss files, I'll make use of 'gulp-ruby-sass'. I am also going to install the usual roster of 'gulp-uglify', 'gulp-minify-css' and 'gulp-concat', as well as 'gulp-main-bower-files' to help easily get the bower_components files and 'gulp-autoprefixer' to automatically add or remove prefixes from css files when they are needed.</p>
 <code>
   npm install gulp-main-bower-files gulp-concat gulp-ruby-sass gulp-uglify gulp-ruby-sass --save-dev
 </code>
@@ -160,6 +160,8 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var bower = require('gulp-main-bower-files');
 var sass = require('gulp-ruby-sass');
+var minifyCSS = require('gulp-minify-css');
+var autoprefixer = require('gulp-autoprefixer');
 var del = require('del');
 </pre>
 <p>The one file I haven't talked about yet is 'del', an npm module I'll be using to make sure that when gulp rebuilds files, the folders it will be rebuilding are clean of any code.</p>
@@ -235,16 +237,16 @@ function bowerScripts() {
 </pre>
 <p>This function is slightly more prodigious as the bower files that do not have javascript files need to be weeded out. The css and fonts provided by Bootstrap and Font-Awesome, for instance, will be handled in another function all together. Therefore, using some of the options availalbe to 'main-bower-files', the font-awesome library is entirely ignored in this function while only Bootstrap's .js file is called in.</p>
 <p><strong>The CSS functions</strong></p>
-<p>Just like with the javascript files, there will be two gulp tasks for CSS. The first is going to take the CSS from the bower files, while the second will translate the .scss files I'll write into css.</p>
+<p>Just like with the javascript files, there will be two gulp tasks for CSS, plus an additional one for font-awesome's fonts. The first is going to take the CSS from the bower files, while the second will translate the .scss files I'll write into css.</p>
 <pre>
-function bowerCSS(){
-  return gulp.src(['./bower_components/bootstrap/dist/css/bootstrap.css', './bower_components/font-awesome/css/font-awesome.css'])
+function bowerStyles(){
+  return gulp.src([paths.bower + '/bootstrap/dist/css/bootstrap.css', paths.bower + '/font-awesome/css/font-awesome.css'])
   .pipe(concat('vendor.css'))
-  .pipe(gulp.dest('./public/styles'));
+  .pipe(minifyCSS())
+  .pipe(gulp.dest(paths.client + '/styles'));
 }
 </pre>
-
-
+<p>bowerStyles() takes the CSS files from font-awesome and bootstrap, concatenates them into one file, minifies their CSS, and then pushes it to the client folder. A similar thing happens for the .scss files in the styles() function, except here I am first using gulp-ruby-sass to compile the .scss files into CSS.</p>
 <pre>
 function styles(){
   return sass(paths.build + '/stylesheets/**/*', {style: 'compressed'})
@@ -254,9 +256,117 @@ function styles(){
             browsers: ['last 2 versions'],
           }))
     .pipe(minifyCSS())
-    .pipe(gulp.dest('./public/styles'));
+    .pipe(gulp.dest(paths.client + '/styles'));
 }
 </pre>
+<p>Finally, I need to grap the fonts from font-awesome, and push them to the client as well, otherwise font-awesome's cool and very useful logos just won't show up, replaced instead by little boxes.</p>
+<pre>
+  function icons(){
+    return gulp.src(paths.bower + '/font-awesome/fonts/*')
+      .pipe(gulp.dest(paths.client + '/fonts'));
+  }
+</pre>
+<p><strong>Gulp Tasks</strong></p>
+<p>Finally, it's time to create the gulp task that will make gulp do all the task managing and take care of the stuff we need doing. This part is very similar to any gulp pre-version 4.0, except that the tasks will simply call the functions defined above.</p>
+<pre>
+  gulp.task('build', gulp.series(
+    clean,
+    gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons)
+  ));
+
+  // The default task (called when you run `gulp` from cli)
+  gulp.task('default', gulp.series('build'));
+</pre>
+<p>At the moment, the only task that is really defined is 'build', which will start off by calling gulp.series, meaning that any actions will happen sequentially, so that clean() is the first thing that will run, making sure that the client folder is ready for any of the work coming after. Then, inside a gulp.parallel method, which means that multiple streams can be opened up so that the functions called run as soon as they are able (or in parallel), every other function I created is called.</p>
+<p>The entire gulp file, as described above, looks like this:</p>
+<pre>
+var gulp = require('gulp');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var bower = require('gulp-main-bower-files');
+var sass = require('gulp-ruby-sass');
+var minifyCSS = require('gulp-minify-css');
+var autoprefixer = require('gulp-autoprefixer');
+var del = require('del');
+
+var paths = {
+  client: './client',
+  server: './server',
+  bower: './bower_components',
+  build: './build'
+};
+
+gulp.task('build', gulp.series(
+  clean,
+  gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons)
+));
+
+// The default task (called when you run `gulp` from cli)
+gulp.task('default', gulp.series('build'));
+
+function clean() {
+  del.sync(paths.client);
+  var emptyStream = gulp.src([]).pipe(gulp.dest('/'));
+  return emptyStream;
+}
+
+function scripts() {
+  return gulp.src(paths.build + '/javascripts/**/*.js')
+  .pipe(concat('all.js'))
+  .pipe(uglify())
+  .pipe(gulp.dest(paths.client + '/javascripts'));
+}
+
+function bowerScripts() {
+  return gulp.src('./bower.json')
+    .pipe(bower({
+      debugging: true,
+      overrides: {
+        'bootstrap': {
+          main: [
+            './dist/js/bootstrap.js'
+          ]
+        },
+        'font-awesome': {
+          ignore: true
+        },
+        'angular-ui-router': {
+          main: [
+            './release/angular-ui-router.js'
+          ]
+        }
+      }
+    }))
+    .pipe(concat('vendor.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(paths.client + '/javascripts'));
+}
+
+function styles(){
+  return sass(paths.build + '/stylesheets/**/*', {style: 'compressed'})
+    .on('error', sass.logError)
+    .pipe(concat('all.css'))
+    .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+          }))
+    .pipe(minifyCSS())
+    .pipe(gulp.dest(paths.client + '/styles'));
+}
+
+function bowerStyles(){
+  return gulp.src([paths.bower + '/bootstrap/dist/css/bootstrap.css', paths.bower + '/font-awesome/css/font-awesome.css'])
+  .pipe(concat('vendor.css'))
+  .pipe(minifyCSS())
+  .pipe(gulp.dest(paths.client + '/styles'));
+}
+
+function icons(){
+  return gulp.src(paths.bower + '/font-awesome/fonts/*')
+    .pipe(gulp.dest(paths.client + '/fonts'));
+}
+</pre>
+<p>In the future, I will add a gulp.watch statement for incremental updates, but for right now this is a good enough starting place. The blueprint, in whatever iteration it is currently at, can be found on <a href="https://github.com/notyourbear/mean-blueprint">my github</a>.</p>
+
 
 
 
