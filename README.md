@@ -101,7 +101,34 @@ module.exports.getSingle = function(req,res){<br/>
   });<br/>
 };
 </pre>
-<p>Here, Mongoose uses the findById method to find a single a entry and returns it, unless an error occurs in which case the type of error gets returned as well.</p>
+<p>Here, Mongoose uses the findById method to find a single entry and returns it, unless an error occurs in which case the type of error gets returned as well.</p>
+<h6>Creating New Entries</h6>
+There are two main steps to creating new entries in a database using Mongoose. 
+<ol>
+  <li>
+    Take data from a form and use it to creat a JS object with key-value pairs mirroring those of the schema
+  </li>
+  <li>
+    Send a json callback response depending on whether the entry has been created
+  </li>
+</ol>
+<p>I won't be building an actual form just yet, as I'll wait on that for when I add Angular to the blueprint, but for now I can set everything up on the backend so that things will work accordingly.</p>
+<pre>
+module.exports.create = function(req, res){<br/>
+  var newEntry = {<br/>
+    name: req.body.name<br/>
+  };<br/>
+<br/>
+  bpModel.create(newEntry, function(err, entry){<br/>
+    if(err){<br/>
+      sendJsonResponse(res, 400, err);<br/>
+    } else {<br/>
+      sendJsonResponse(res, 201, entry);<br/>
+    }<br/>
+  });<br/>
+}
+</pre>
+<p>newEntry is created from the post data to mirror the schema and is then inserted into the database using Mongoose's create method.</p>
 
 
 

@@ -18,7 +18,17 @@ module.exports.getAll = function(req, res){
 };
 
 module.exports.create = function(req, res){
-  sendJsonResponse(res, 200, {"status": "success"});
+  var newEntry = {
+    name: req.body.name
+  };
+
+  bpModel.create(newEntry, function(err, entry){
+    if(err){
+      sendJsonResponse(res, 400, err);
+    } else {
+      sendJsonResponse(res, 201, entry);
+    }
+  });
 };
 
 module.exports.getSingle = function(req,res){
@@ -34,7 +44,6 @@ module.exports.getSingle = function(req,res){
       sendJsonResponse(res, 200, entry);
     }
   });
-  
 };
 
 module.exports.updateSingle = function(req, res){
