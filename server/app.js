@@ -5,12 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+//requiring db before routes to make sure everything loads in correctly
+require('./models/db');
+
 var routes = require('./routes/index');
 var routesApi = require('./api/routes/index');
 
 var app = express();
-
-require('./models/db');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

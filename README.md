@@ -62,5 +62,15 @@ To start:
   };
 </pre>
 <p>While this new function doesn't compose a lot of code, it helps abstract the process of sending a response and data back, which is helpful whenever I need to change this function in the future. Rather than having to change the code in multiple places, I will only ever have to change this function.</p>
+<h6>Including the Model</h6>
+<p>Now it's time to include the bpModel to make actual calls to the database. On top of the file, before anything else takes place, both Mongoose and the model need to be required.</p>
+<pre>
+  var mongoose = require('mongoose'); <br/>
+  var bpModel = mongoose.model(bpModel);
+</pre>
+<h6>Get Requests</h6>
+<p>I am going to start off by setting up the get request calls, both for all entries of the schema in the database and for a single specific entry.</p>
+
+
 
 
