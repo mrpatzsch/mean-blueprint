@@ -47,5 +47,7 @@ To start:
   module.exports.deleteSingle = function(req, res){<br/>
   };
 </pre>
+<h6>Returning JSON</h6>
+<p>Each of these routes is going to need to return both a status code and json data in response to any call.</p>
 
 
