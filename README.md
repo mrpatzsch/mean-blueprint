@@ -92,5 +92,21 @@ server/app.js: <br/>
   }); 
 </pre>
 <p>Since closing the database connection is an asynchronuous task, the gracefulShutdown function takes a callback to play out once the connection has been closed. The event listeners call the function and provide the requisite callback when necessary.</p>
+<h5>A Model Blueprint</h5>
+<p>Since this is a blueprint for future MEAN applications, I am going to include a very basic Mongoose model for reference in future applications. This model will only have a name and id, so as I said, basic. I will create this model in a file: 'server/models/bpModel.js'.</p>
+<p>To use this file in the application, I will require it at the bottom of the 'db.js' file.</p>
+<pre>
+  //server/models/db.js <br/>
+  require('./bpModel.js');
+</pre>
+<p>The file itself will make use of Mongoose's schema method to define the model.</p>
+<pre>
+  //server/models/bpModel.js <br/>
+  var bpModelSchema = new mongoose.Schema({ <br/>
+    name: {type: String, required: true} <br/>
+  });
+</pre>
+<p>Using the object notation to add 'required: true' to the name definition is a simple way of adding a quick validation that a name would be required for any new db entries for the bpModel.</p>
+
 
 
