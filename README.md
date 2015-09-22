@@ -48,6 +48,19 @@ To start:
   };
 </pre>
 <h6>Returning JSON</h6>
-<p>Each of these routes is going to need to return both a status code and json data in response to any call.</p>
+<p>Each of these routes is going to need to return both a status code and json data in response to any call. Since both of these are common tasks, I am going to create an additional function to take care of it.</p>
+<pre>
+  //server/api/controllers/bpModel.js
+    var sendJsonResponse = function(res, status, content){ <br/>
+    res.status(status); <br/>
+    res.json(content); <br/>
+  };
+
+  //example invocation:
+  module.exports.getAll = function(req, res){ <br/>
+    sendJsonResponse(res, 200, {"status": "success"}); <br/>
+  };
+</pre>
+<p>While this new function doesn't compose a lot of code, it helps abstract the process of sending a response and data back, which is helpful whenever I need to change this function in the future. Rather than having to change the code in multiple places, I will only ever have to change this function.</p>
 
 

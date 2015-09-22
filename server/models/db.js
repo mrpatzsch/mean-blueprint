@@ -29,7 +29,7 @@ var gracefulShutdown = function(msg, cb){
 //event listens
 process.once('SIGUSR2', function(){
   gracefulShutdown('nodemon restart', function(){
-    process.kill(process.pid, 'SUGUSR2');
+    process.kill(process.pid, 'SIGUSR2');
   });
 });
 

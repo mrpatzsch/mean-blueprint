@@ -1,19 +1,24 @@
-module.exports.all = function(req, res){
-  res.status(200);
-  res.json({'success': 'yeah!'});
+var sendJsonResponse = function(res, status, content){
+  res.status(status);
+  res.json(content);
+};
+
+module.exports.getAll = function(req, res){
+  sendJsonResponse(res, 200, {"status": "success"});
 };
 
 module.exports.create = function(req, res){
-  res.status(200);
-  res.json({'success': 'yeah!'});
+  sendJsonResponse(res, 200, {"status": "success"});
+};
+
+module.exports.getSingle = function(req,res){
+  sendJsonResponse(res, 200, {"status": "success"});
 };
 
 module.exports.updateSingle = function(req, res){
-  res.status(200);
-  res.json({'success': 'yeah!'});
+  sendJsonResponse(res, 200, {"status": "success"});
 };
 
 module.exports.deleteSingle = function(req, res){
-  res.status(200);
-  res.json({'success': 'yeah!'});
+  sendJsonResponse(res, 200, {"status": "success"});
 };
