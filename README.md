@@ -70,7 +70,38 @@ To start:
 </pre>
 <h6>Get Requests</h6>
 <p>I am going to start off by setting up the get request calls, both for all entries of the schema in the database and for a single specific entry.</p>
-
+<pre>
+  //find all: <br/>
+module.exports.getAll = function(req, res){<br/>
+  bpModel.find().exec(function(err, entries){ <br/>
+    if(err){ <br/>
+      sendJsonResponse(res, 404, {'status': 'something went wrong'}); <br/>
+    } <br/>
+    <br/>
+    console.log('find complete'); <br/>
+    sendJsonResponse(res, 200, entries); <br/>
+  });
+};
+</pre>
+<p>To find all entries, I simply use the Mongoose find query to return every database entry associated with the schema. I then log out a simple error if something isn't found, though I will later update these errors to be much more specific for different use cases. It's always important to make your error handling as explicit as possible; it makes developing a much easier task.</p>
+<p>Finding a single entry takes a similar approach:</p>
+<pre>
+module.exports.getSingle = function(req,res){<br/>
+  var id = req.params.id;<br/>
+  <br/>
+  bpModel.findById(id).exec(function(err, entry){<br/>
+    if(!id){<br/>
+      sendJsonResponse(res, 404, {'status': 'no post id supplied'});<br/>
+    } else if (err) {<br/>
+      sendJsonResponse(res, 404, {'status': 'post not found'});<br/>
+    } else {<br/>
+      console.log('findById complete');<br/>
+      sendJsonResponse(res, 200, entry);<br/>
+    }<br/>
+  });<br/>
+};
+</pre>
+<p>Here, Mongoose uses the findById method to find a single a entry and returns it, unless an error occurs in which case the type of error gets returned as well.</p>
 
 
 
