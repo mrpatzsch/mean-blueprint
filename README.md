@@ -60,7 +60,37 @@ server/app.js: <br/>
     console.log('Mongoose disconnected');<br/>
   });
 </pre>
+<p>On starting the server, the connection message will now be fired. However, at no point will the disconnect message come up, even after closing the server, because a Mongoose doesn't automatically close when its application does. To close the connection, the application will need to listen to a SIGNIT event (a Node.js process).</p>
+<p><strong>Graceful Shutdown</strong></p>
+<p>I'll be including a few more lines of code in the db.js file that will capture process termination events -- SIGNIT,  SIGUSR2 (because I use nodemon to run my servers), and SIGTERM (used by Heroku, one of my more favorite places to quickly protoype apps) -- and then manually restart the behavior required after closing the Mongoose connection. There'll be three event listeners and a function that handles the closing.</p>
+<pre>
+  //Graceful Shutdown <br/>
+  var gracefulShutdown = function(msg, cb){ <br/>
+    mongoose.connection.close(function(){ <br/>
+      console.log('Mongoose connection closed through', msg); <br/>
+      cb(); <br/>
+    }); <br/>
+  };
 
-
+  //event listens
+  process.once('SIGUSR2', function(){ <br/>
+    gracefulShutdown('nodemon restart', function(){ <br/>
+      process.kill(process.pid, 'SUGUSR2'); <br/>
+    }); <br/>
+  }); <br/>
+  <br/>
+  process.on('SIGNIT', function(){ <br/>
+    gracefulShutdown('app termination', function(){ <br/>
+      process.exit(0); <br/>
+    }); <br/>
+  }); <br/>
+  <br/>
+  process.on('SIGTERM', function(){ <br/>
+    gracefulShutdown('Heroku App Shutdown', function(){ <br/>
+      process.exit(0); <br/>
+    }); <br/>
+  }); 
+</pre>
+<p>Since closing the database connection is an asynchronuous task, the gracefulShutdown function takes a callback to play out once the connection has been closed. The event listeners call the function and provide the requisite callback when necessary.</p>
 
 
