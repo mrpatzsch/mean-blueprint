@@ -47,9 +47,42 @@ module.exports.getSingle = function(req,res){
 };
 
 module.exports.updateSingle = function(req, res){
-  sendJsonResponse(res, 200, {"status": "success"});
+  var id = req.params.id;
+  var name = req.body.name;
+  
+  bpModel.findById(id).exec(function(err, entry){
+    if(!id){
+      sendJsonResponse(res, 404, {'status': 'no post id supplied'});
+    } else if (err) {
+      sendJsonResponse(res, 404, {'status': 'post not found'});
+    } else {
+      entry.name = name;
+      entry.save(function(err, entry){
+        if(err){
+          sendJsonResponse(res, 404, err);
+        } else {
+          sendJsonResponse(res, 200, entry);
+        }
+      });
+    }
+  });
 };
 
 module.exports.deleteSingle = function(req, res){
+  var id = req.params.id;
+
+  if(id){
+    bpModel.findByIdAndRemove(id)
+    .exec(
+      function(err, entry){
+        if(err){
+          sendJsonResponse(res, 404, err);
+          return;
+        }
+        sendJsonResponse(res, 204, entry);
+      });
+  } else {
+    sendJsonResponse(res, 404, {'message': 'no id provided'});
+  }
   sendJsonResponse(res, 200, {"status": "success"});
 };
