@@ -50,3 +50,40 @@ Adding Angular
       });<br/>
   }]);
 </pre>
+<h5>The Module</h5>
+<p>The angular module is instantiated at the top of the page. Inside the brackets, I am injecting the ui-router service, something I installed with bower in a previous entry, and which will serve as the routing method for the application.</p>
+<p>The routes themselves are put together below in the 'app.config' part. Each route will be provided via a different state that controls the url for the route, which controller the route should be using, as well as the template to show. There are other options, but for the basic blueprint I will not need to explore them. I am also currently only creating a home route. Others would go beneath it in future projects.</p>
+<h5>Templates</h5>
+<p>I will add the templates that ui-router will use to render the page to a new folder in the 'build' directory entitled 'templates', as per the url used above. For now, I just need a base template entitled 'home.html'. For now this template will just hold html. I will update it with a simple two-directional data display once I create a controller, to make sure everything works accordingly.</p>
+<pre>
+  //build/templates/home.html<br/>
+  <h1>The Test Template</h1><br/>
+  <p>Hi. I am a test.</p>
+</pre>
+<p>Angular will look for the templates in the static folder available to the client (for my projects, that will be the 'client' folder). Since this folder is created via gulp, I will need to add a new gulp task that takes the templates I create in /build/templates/ and moves them to /client/templates/.</p>
+<pre>
+  //gulpfile.js<br/>
+  function templates(){<br/>
+    return gulp.src(paths.build + '/templates/**/*')<br/>
+    .pipe(gulp.dest(paths.client + '/templates'));<br/>
+  }
+</pre>
+<p>This function has been added to the gulp build task and will simply take the templates folder in the 'build' folder and recreate it in the 'client' folder, thereby making it available to Angular.</p>
+<h5>Controllers</h5>
+<p>Every route will, potentially, have its own controller. For the purpose of this blueprint, I will only create a single one, found at 'build/javascripts/controllers/baseCtrl.js'.</p>
+<pre>
+  //build/javascripts/controllers/baseCtrl.js <br/>
+  var base = app.controller('baseController', ['$scope', function($scope) {<br/>
+  <br/>
+  $scope.test = 'hi there, this is the scope test';<br/>
+  <br/>
+  }]);
+</pre>
+<p>For now this controller includes a single $scope variable, called 'test', that will help make sure that the two-directional databinding is set up correctly. To test this, I need to update the home template to invoke the variable:</p>
+<pre>
+  //build/templates/home.html<br/>
+  <h1>The Test Template</h1><br/>
+      <p>Hi I am a test.</p><br/>
+      {{test}}<br/>
+</pre>
+<p>Now, after I rebuild the scope file and start the server, the home page should show the scoped variable output correctly.</p>

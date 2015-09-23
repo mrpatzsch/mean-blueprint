@@ -17,7 +17,7 @@ var paths = {
 
 gulp.task('build', gulp.series(
   clean,
-  gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons)
+  gulp.parallel(scripts, bowerScripts, styles, bowerStyles, icons, templates)
 ));
 
 // The default task (called when you run `gulp` from cli)
@@ -34,6 +34,11 @@ function scripts() {
   .pipe(concat('all.js'))
   .pipe(uglify())
   .pipe(gulp.dest(paths.client + '/javascripts'));
+}
+
+function templates(){
+  return gulp.src(paths.build + '/templates/**/*')
+  .pipe(gulp.dest(paths.client + '/templates'));
 }
 
 function bowerScripts() {
