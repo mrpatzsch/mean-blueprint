@@ -1,6 +1,6 @@
 var app = angular.module('app', ['ui.router']);
 
-app.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider,   $urlRouterProvider) {
+app.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function ($stateProvider,   $urlRouterProvider, $locationProvider) {
 
   // 'if typed in url is not used, go to homepage'
   $urlRouterProvider.otherwise('/');
