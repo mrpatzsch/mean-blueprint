@@ -23,6 +23,11 @@ gulp.task('build', gulp.series(
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', gulp.series('build'));
 
+gulp.task(watch);
+gulp.task('scripts', scripts);
+gulp.task('styles', styles);
+gulp.task(templates);
+
 function clean() {
   del.sync(paths.client);
   var emptyStream = gulp.src([]).pipe(gulp.dest('/'));
@@ -87,4 +92,13 @@ function bowerStyles(){
 function icons(){
   return gulp.src(paths.bower + '/font-awesome/fonts/*')
     .pipe(gulp.dest(paths.client + '/fonts'));
+}
+
+function watch(){
+  var js = paths.build + '/javascripts/**/*';
+  var scss = paths.build + '/stylesheets/**/*';
+  var templs = paths.build + '/templates/**/*';
+  gulp.watch(js, scripts);
+  gulp.watch(scss, styles);
+  gulp.watch(templs, templates);
 }
